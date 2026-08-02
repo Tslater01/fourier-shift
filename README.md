@@ -1,17 +1,17 @@
-# The Fourier Shift — spatial vs. frequency-domain detection of AI-generated images
+# The Fourier Shift | spatial vs. frequency-domain detection of AI-generated images
 
 CS 7643 Deep Learning, final project.
 
 We ask whether an AI-image detector that reads an image's **frequency fingerprint** generalizes to
 unseen generators better than one that reads its **pixels**. On [CIFAKE](https://www.kaggle.com/datasets/birdy654/cifake-real-and-ai-generated-synthetic-images)
 (120k 32×32 images; 60k real CIFAR-10, 60k latent-diffusion fakes) we train the *same* ResNet-18
-backbone on two input representations — raw RGB, and the centered log-magnitude 2-D FFT — so the
+backbone on two input representations, raw RGB, and the centered log-magnitude 2-D FFT, so the
 representation is the only variable. Around that controlled core we add a pretrained ConvNeXt-Tiny
 arm in both domains, a two-stream RGB+FFT fusion model, four ablations on the front-end and on fusion,
 and two distribution-shift probes: **cross-generator** (test against DDPM samples, a generator family
 never seen in training) and **post-processing robustness** (JPEG recompression, Gaussian blur). Labels are
 fixed as `REAL = 0, FAKE = 1` throughout; F1 and AUROC treat FAKE as the positive class, and AUROC is
-reported unflipped — a value below 0.5 is a result, not a bug.
+reported unflipped, a value below 0.5 is a result, not a bug.
 
 **Convention note for readers of the results:** the FFT front-end (`fft2` → `fftshift` → `log1p|·|` →
 standardize) is a *fixed, non-learned* transform. Phase is discarded. That is a deliberate information
@@ -23,7 +23,7 @@ bottleneck, and it is the thing the experiments are about.
 
 Requires Python 3.12 and, for practical runtimes, an NVIDIA GPU (developed on an RTX 4060, 8 GB).
 CPU works but is slow. Commands below are PowerShell (Windows 11); on Linux/macOS substitute
-`source .venv/bin/activate` and forward-slash paths — no code is platform-specific.
+`source .venv/bin/activate` and forward-slash paths, no code is platform-specific.
 
 ```powershell
 python -m venv .venv
@@ -56,11 +56,11 @@ data/ddpm_fakes/*.jpg                           4,000 DDPM samples (cross-genera
 data/fft_stats.json                             cached normalization stats, written on first use
 ```
 
-`data/` is gitignored — nothing here ships with the repo.
+`data/` is gitignored, nothing here ships with the repo.
 
 **The validation split is derived from a keyed hash of each file's path, not an RNG**, so all 5,000
 validation images (2,500 per class) are identical across every run and every machine, with no seed
-plumbing. Normalization statistics — both RGB and FFT — are accumulated in a single streaming pass
+plumbing. Normalization statistics, both RGB and FFT, are accumulated in a single streaming pass
 over the *training* split only, with validation images excluded.
 
 Regenerating the DDPM set is optional and takes a few minutes on a GPU:
@@ -76,7 +76,7 @@ compression detector rather than a generator-fingerprint detector.
 
 ## Reproducing the experiments
 
-Smoke test first — it is the gate, and it finishes in about 90 seconds:
+Smoke test first, it is the gate, and it finishes in about 90 seconds:
 
 ```powershell
 python -m src.train --arch resnet18 --domain fft --epochs 1 --limit 2000 --bs 256 --run smoke
@@ -150,7 +150,7 @@ training. Each call appends one row to `results/all_evals.csv`.
 
 AUROC is computed with FAKE as the positive class and is **not** flipped when it falls below 0.5. A
 sub-chance AUROC under the cross-generator condition is a genuine finding — the detector's ranking is
-anti-correlated, not absent — and it is reported that way deliberately.
+anti-correlated, not absent, and it is reported that way deliberately.
 
 ## Figures and tables
 

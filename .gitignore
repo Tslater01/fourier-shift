@@ -1,0 +1,8 @@
+﻿.venv/
+data/
+results/
+report_assets/
+__pycache__/
+*.pt
+*.pth
+*.npz
